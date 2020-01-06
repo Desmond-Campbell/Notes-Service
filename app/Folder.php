@@ -40,6 +40,12 @@ class Folder extends Model
         $paging = [ 'page' => $folders->currentPage(), 'total' => $folders->total(), 'pages' => $folders->lastPage(), 'limit' => $limit, 'sortIcons' =>  $sortIcons ];
         $folders = $folders->items();
 
+        foreach ( $folders as $folder ) {
+
+            $folder->counter = Note::where('folder_id', $folder->_id)->where('user_id', $user_id)->count();
+
+        }
+
         $result = [ 'folders' => $folders ];
 
         $result['paging'] = $paging;

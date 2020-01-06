@@ -18,12 +18,12 @@ class NotesController extends \App\Http\Controllers\Controller
         $files = $r->params['files'] ?? [];
         $user_id = $params['user_id'] ?? 0;
 
-        $id = $data['id'] ?? null;
+        $id = $data['_id'] ?? null;
         $folder_id = $data['folder_id'] ?? null;
         $title = $data['title'] ?? '';
         $tags = $data['tags'] ?? '';
-        $content = $data['content'] ?? [];
-        $content_full = implode( "\n\n", $content ); 
+        $stack = $data['stack'] ?? [];
+        $content = implode( "\n\n", $stack ); 
         $is_private = $data['is_private'] ?? null;
         $access_level = $data['access_level'] ?? null;
 
@@ -35,13 +35,13 @@ class NotesController extends \App\Http\Controllers\Controller
             if ( $title ) { $note->title = $title; }
             if ( $content ) { 
                 $note->content = $content; 
-                $note->content_full = $content_full 
+                $note->stack = $stack;
             }
             if ( $tags ) { $note->tags = $tags; }
             if ( $access_level ) { $note->access_level = $access_level; }
             if ( !is_null( $is_private ) ) { $note->is_private = $is_private; }
         
-            $note->keywords = implode( ' ', Note::words( $content_full . ' ' . $tags . ' ' . $title ) ); 
+            $note->keywords = implode( ' ', Note::words( $content . ' ' . $tags . ' ' . $title ) ); 
 
             $note->save();
 
@@ -71,8 +71,8 @@ class NotesController extends \App\Http\Controllers\Controller
             $note_data['folder_id'] = $folder_id;
             $note_data['title'] = $title;
             $note_data['content'] = $content;
-            $note_data['content_full'] = $content_full; 
-            $note_data['keywords'] = implode( ' ', Note::words( $content_full . ' ' . $tags . ' ' . $title ) ); 
+            $note_data['stack'] = $stack; 
+            $note_data['keywords'] = implode( ' ', Note::words( $content . ' ' . $tags . ' ' . $title ) ); 
             $note_data['tags'] = $tags;
             $note_data['is_private'] = $is_private ?? false;
             $note_data['access_level'] = $access_level ?? 0;
@@ -97,7 +97,7 @@ class NotesController extends \App\Http\Controllers\Controller
 
             $note->delete();
 
-            return response()->json( [ 'success' => true ] );
+            return response()->json( [ 'success' => true, 'note' => [ 'title' => 'Untitled Note', '_id' => null, 'message' => 'Original requested note not found. This is a new note.', 'stack' => [ '' ] ] ] );
 
         }
 
@@ -109,15 +109,19 @@ class NotesController extends \App\Http\Controllers\Controller
 
         $user_id = $r->user_id;
        
-        $id = $r->id;
+        $id = $r->_id;
 
         $note = Note::where('user_id', $user_id)->find($id);
+
+        if ( !$note ) {
+            $note = [ 'title' => 'Untitled Note', '_id' => null, 'message' => 'Original requested note not found. This is a new note.', 'stack' => [ '' ] ];
+        }
 
         return response()->json( $note );
 
     }
 
-    public function query(Request $r){
+    public function browse(Request $r){
 
         $user_id = $r->user_id;
         
@@ -139,7 +143,7 @@ class NotesController extends \App\Http\Controllers\Controller
 
         $user_id = $params['user_id'];
       
-        $id = $data['id'] ?? null;
+        $id = $data['_id'] ?? null;
         $name = $data['name'] ?? '';
 
         if ( $id ) {
@@ -160,7 +164,9 @@ class NotesController extends \App\Http\Controllers\Controller
 
         }
 
-        return response()->json( [ 'folder' => $folder, 'success' => true ] );
+        $folders = Folder::fetch( [ 'user_id' => $user_id ] );
+
+        return response()->json( [ 'folder' => $folder, 'success' => true, 'folders' => $folders ] );
 
     }
 

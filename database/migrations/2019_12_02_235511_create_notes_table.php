@@ -17,7 +17,7 @@ class CreateNotesTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->text('content')->nullable();
-            $table->text('content_full')->nullable();
+            $table->text('stack')->nullable();
             $table->integer('pages')->nullable();
             $table->string('tags')->nullable();
             $table->string('keywords')->nullable();

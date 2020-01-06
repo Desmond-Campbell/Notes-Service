@@ -18,7 +18,7 @@ class Note extends Model
         $notes = self::where( 'user_id', $user_id );
 
         if ( $args['folder_id'] ?? null ) $notes = $notes->where('folder_id', $args['folder_id']);
-        if ( !( $args['show_private'] ?? false ) ) $notes = $notes->where('is_private', 0);
+        // if ( !( $args['show_private'] ?? false ) ) $notes = $notes->where('is_private', 0);
 
         $limit = (int) ( $args['paging']['limit'] ?? 15 );
         $page = (int) ( $args['paging']['page'] ?? 1 );
