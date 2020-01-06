@@ -89,7 +89,7 @@ class NotesController extends \App\Http\Controllers\Controller
     public function delete(Request $r){
 
         $user_id = $r->user_id;
-        $id = $r->id;
+        $id = $r->_id;
 
         $note = Note::where('user_id', $user_id)->find($id);
 
@@ -125,7 +125,7 @@ class NotesController extends \App\Http\Controllers\Controller
 
         $user_id = $r->user_id;
         
-        $paging = $r->input('paging') ?? [ 'page' => 1, 'limit' => 15 ];
+        $paging = $r->input('paging') ?? [ 'currentPage' => 1, 'limit' => 15 ];
 
         $args = [ 'paging' => $paging, 'user_id' => $user_id ];
 

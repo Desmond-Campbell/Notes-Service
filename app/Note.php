@@ -17,11 +17,11 @@ class Note extends Model
 
         $notes = self::where( 'user_id', $user_id );
 
-        if ( $args['folder_id'] ?? null ) $notes = $notes->where('folder_id', $args['folder_id']);
+        if ( $args['paging']['folder_id'] ?? null ) $notes = $notes->where('folder_id', $args['paging']['folder_id']);
         // if ( !( $args['show_private'] ?? false ) ) $notes = $notes->where('is_private', 0);
 
         $limit = (int) ( $args['paging']['limit'] ?? 15 );
-        $page = (int) ( $args['paging']['page'] ?? 1 );
+        $page = (int) ( $args['paging']['currentPage'] ?? 1 );
 
         $sortIcons = $args['paging']['sortIcons'] ?? [];
         $sortField = $args['paging']['sortField'] ?? 'created_at';
@@ -42,7 +42,12 @@ class Note extends Model
         }
 
         $notes = $notes->paginate( $limit, ['*'], null, $page );
-        $paging = [ 'page' => $notes->currentPage(), 'total' => $notes->total(), 'pages' => $notes->lastPage(), 'limit' => $limit, 'sortIcons' =>  $sortIcons ];
+        $paging = [ 'currentPage' => $notes->currentPage(), 'total' => $notes->total(), 'pageCount' => $notes->lastPage(), 'limit' => $limit, 'sortIcons' =>  $sortIcons ];
+
+        if ( $args['paging']['folder_id'] ?? null ) {
+            $paging['folder_id'] = $args['paging']['folder_id'];
+        }
+
         $notes = $notes->items();
 
         $result = [ 'notes' => $notes ];
