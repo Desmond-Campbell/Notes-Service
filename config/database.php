@@ -10,9 +10,9 @@ return [
             'driver'   => 'mongodb',
             'host'     => 'localhost',
             'port'     => 27017,
-            'username' => '',
-            'password' => '',
-            'database' => 'notes_service'
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'database' => env('DB_DATABASE','notes_service')
         ),
 
     ],
