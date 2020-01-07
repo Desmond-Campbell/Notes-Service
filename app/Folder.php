@@ -46,7 +46,9 @@ class Folder extends Model
 
         }
 
-        $result = [ 'folders' => $folders ];
+        $total_counter = Note::where('user_id', $user_id)->count();
+
+        $result = [ 'folders' => $folders, 'total_counter' => $total_counter ];
 
         $result['paging'] = $paging;
 
