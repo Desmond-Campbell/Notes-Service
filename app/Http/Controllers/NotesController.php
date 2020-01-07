@@ -172,7 +172,7 @@ class NotesController extends \App\Http\Controllers\Controller
 
     public function deleteFolder(Request $r){
 
-        $id = $r->id;
+        $id = $r->_id;
         $user_id = $r->user_id;
 
         $folder = Folder::where('user_id', $user_id)->find($id);
@@ -196,7 +196,9 @@ class NotesController extends \App\Http\Controllers\Controller
 
             $folder->delete();
 
-            return response()->json( [ 'success' => true ] );
+            $folders = Folder::fetch( [ 'user_id' => $user_id ] );
+
+            return response()->json( [ 'success' => true, 'folders' => $folders ] );
 
         }
 
