@@ -80,7 +80,7 @@ class NotesController extends \App\Http\Controllers\Controller
         if ( !$note ) {
             $note = [ 'title' => 'Untitled Note', '_id' => null, 'message' => 'Original requested note not found. This is a new note.', 'stack' => [ '' ] ];
         } else {
-            $note = Note::transform($note->stack);
+            $note = Note::transform($note);
         }
         return response()->json( $note );
     }
